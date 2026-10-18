@@ -1,5 +1,9 @@
 # Onion. Revolutionized 🧅
 
+[![Live Demo](https://img.shields.io/badge/Website-Live%20Online-brightgreen?style=for-the-badge&logo=google-chrome)](https://gaikwadsarthak272007.github.io/onion_revolution/)
+[![GitHub Pages](https://img.shields.io/badge/Hosted%20With-GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://gaikwadsarthak272007.github.io/onion_revolution/)
+
+> 🌐 **Live Demo:** **[https://gaikwadsarthak272007.github.io/onion_revolution/](https://gaikwadsarthak272007.github.io/onion_revolution/)**  
 > **Interactive Real Crop Experience**  
 > *Presented by Sarthak Gaikwad*
 
