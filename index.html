@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ONION. REVOLUTIONIZED. // Interactive Real Crop Experience</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+
+  <style>
+    :root {
+      --magenta: #5e5e5e;
+      --magenta-bright: #929292;
+      --magenta-deep: #333333;
+      --violet: #656565;
+      --bg-dark: #040404;
+      --bg-panel: rgba(10, 10, 10, 0.72);
+      --border-glass: rgba(94, 94, 94, 0.25);
+      --border-bright: rgba(146, 146, 146, 0.65);
+      --text-main: #f5f5f5;
+      --text-muted: #bbbbbb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Ambient Cyber-Botanical Grid & Magenta Aurora Backdrop */
+    .ambient-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(94, 94, 94, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 82% 78%, rgba(101, 101, 101, 0.14) 0%, transparent 50%),
+        linear-gradient(rgba(94, 94, 94, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(94, 94, 94, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+    }
+
+    /* Sleek Floating Glass Header */
+    header {
+      position: fixed;
+      top: 16px;
+      left: 24px;
+      right: 24px;
+      height: 64px;
+      padding: 0 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(7, 7, 7, 0.78);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(94, 94, 94, 0.1);
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-orb {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--magenta), var(--violet));
+      display: grid;
+      place-items: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #fff;
+      box-shadow: 0 0 18px rgba(94, 94, 94, 0.6);
+    }
+
+    .brand-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #ffffff, var(--magenta-bright));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-Right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(94, 94, 94, 0.1);
+      border: 1px solid rgba(94, 94, 94, 0.25);
+      padding: 7px 14px;
+      border-radius: 30px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .status-pill strong {
+      color: var(--magenta-bright);
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, rgba(94, 94, 94, 0.2), rgba(101, 101, 101, 0.2));
+      border: 1px solid var(--border-glass);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn:hover, .action-btn.active-tool {
+      background: var(--magenta);
+      border-color: var(--magenta-bright);
+      box-shadow: 0 0 20px rgba(94, 94, 94, 0.55);
+      transform: translateY(-1px);
+    }
+
+    /* Main Split Layout */
+    .split-wrapper {
+      display: flex;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* LEFT COLUMN: Interactive Modern Cards */
+    .info-column {
+      width: 46%;
+      padding: 0 2.5vw 0 4vw;
+      position: relative;
+      z-index: 10;
+    }
+
+    .stage-section {
+      min-height: 102vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 110px 0;
+    }
+
+    /* Glassmorphic 2.0 Stage Card */
+    .info-card {
+      position: relative;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-glass);
+      border-radius: 24px;
+      padding: 36px 34px;
+      backdrop-filter: blur(22px);
+      box-shadow: 0 30px 65px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+      overflow: hidden;
+    }
+
+    .info-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--magenta), var(--violet), var(--magenta-bright));
+    }
+
+    .info-card:hover {
+      border-color: var(--border-bright);
+      box-shadow: 0 30px 75px rgba(0, 0, 0, 0.85), 0 0 40px rgba(94, 94, 94, 0.14);
+    }
+
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .stage-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: var(--magenta-bright);
+      background: rgba(94, 94, 94, 0.14);
+      border: 1px solid rgba(94, 94, 94, 0.3);
+      padding: 6px 14px;
+      border-radius: 30px;
+    }
+
+    .stage-big-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+      background: linear-gradient(180deg, rgba(94, 94, 94, 0.45), rgba(94, 94, 94, 0.05));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h1, h2 {
+      font-family: 'Syne', sans-serif;
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 1.06;
+      margin-bottom: 16px;
+      color: #ffffff;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3vw, 3rem);
+    }
+
+    h2 {
+      font-size: clamp(1.65rem, 2.3vw, 2.3rem);
+    }
+
+    .description {
+      font-size: 0.96rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* Interactive Feature Chips */
+    .feature-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .feature-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(94, 94, 94, 0.15);
+      border-radius: 12px;
+      padding: 12px 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .feature-item:hover {
+      background: rgba(94, 94, 94, 0.08);
+      border-color: rgba(94, 94, 94, 0.38);
+    }
+
+    .feature-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(94, 94, 94, 0.2);
+      color: var(--magenta-bright);
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-text {
+      font-size: 0.85rem;
+      color: #eaeaea;
+      line-height: 1.5;
+    }
+
+    .feature-text strong {
+      color: #ffffff;
+    }
+
+    /* Bento-Grid Telemetry with Animated Progress Bars */
+    .bento-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(94, 94, 94, 0.16);
+    }
+
+    .bento-box {
+      background: rgba(6, 6, 6, 0.65);
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(94, 94, 94, 0.16);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bento-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: block;
+    }
+
+    .bento-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      color: #a4a4a4;
+      margin-top: 3px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .mini-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--magenta), var(--magenta-bright));
+      border-radius: 4px;
+      box-shadow: 0 0 8px var(--magenta);
+    }
+
+    /* RIGHT COLUMN: Framed Visual Cockpit */
+    .visual-cockpit {
+      position: fixed;
+      top: 96px;
+      right: 24px;
+      width: calc(54% - 36px);
+      height: calc(100vh - 180px);
+      border-radius: 26px;
+      overflow: hidden;
+      z-index: 5;
+      background: #030303;
+      border: 1px solid var(--border-glass);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 40px rgba(94, 94, 94, 0.12);
+    }
+
+    /* Top Overlay Toolbar Inside the Visual Cockpit */
+    .cockpit-toolbar {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      right: 20px;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .cockpit-badge {
+      pointer-events: auto;
+      background: rgba(7, 7, 7, 0.82);
+      border: 1px solid var(--border-glass);
+      padding: 7px 14px;
+      border-radius: 30px;
+      backdrop-filter: blur(12px);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: #dedede;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--magenta);
+      box-shadow: 0 0 10px var(--magenta);
+      animation: pulseGlow 1.5s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.4; }
+    }
+
+    .cockpit-controls {
+      pointer-events: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .cockpit-btn {
+      background: rgba(7, 7, 7, 0.82);
+      border: 1px solid var(--border-glass);
+      color: var(--text-main);
+      padding: 7px 13px;
+      border-radius: 30px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+    }
+
+    .cockpit-btn:hover, .cockpit-btn.active {
+      background: var(--magenta);
+      border-color: var(--magenta-bright);
+      box-shadow: 0 0 15px rgba(94, 94, 94, 0.5);
+    }
+
+    /* Stacked Real Photo Slides */
+    .photo-layer {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      overflow: hidden;
+    }
+
+    .photo-layer.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .main-crop-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transform: scale(1.06);
+      filter: contrast(1.06) saturate(1.08);
+      transition: transform 0.6s ease-out;
+    }
+
+    .photo-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, transparent 45%, rgba(4, 4, 4, 0.65) 100%),
+        linear-gradient(0deg, rgba(4, 4, 4, 0.9) 0%, transparent 32%);
+      pointer-events: none;
+    }
+
+    /* Anatomical Hotspot Pin */
+    .anatomical-pin {
+      position: absolute;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(8, 8, 8, 0.88);
+      border: 1px solid var(--magenta);
+      padding: 8px 16px;
+      border-radius: 30px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 18px rgba(94, 94, 94, 0.35);
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+    .anatomical-pin:hover {
+      transform: scale(1.06);
+    }
+
+    .pin-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: #ffffff;
+      letter-spacing: 0.6px;
+    }
+
+    /* Click-to-Swap Macro Picture-in-Picture Card */
+    .macro-inset-card {
+      position: absolute;
+      bottom: 22px;
+      left: 22px;
+      width: 245px;
+      background: rgba(9, 9, 9, 0.9);
+      border: 1px solid rgba(94, 94, 94, 0.45);
+      border-radius: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(94, 94, 94, 0.2);
+      z-index: 25;
+      cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .macro-inset-card:hover {
+      transform: translateY(-4px) scale(1.03);
+      border-color: var(--magenta-bright);
+    }
+
+    .swap-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(7, 7, 7, 0.85);
+      border: 1px solid var(--magenta);
+      color: var(--magenta-bright);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
+
+    .macro-inset-img {
+      width: 100%;
+      height: 132px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid rgba(94, 94, 94, 0.22);
+    }
+
+    .macro-inset-caption {
+      padding: 10px 13px;
+    }
+
+    .macro-inset-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      color: var(--magenta-bright);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .macro-inset-sub {
+      font-size: 0.73rem;
+      color: #dbdbdb;
+      line-height: 1.35;
+    }
+
+    /* Bottom-Right Specimen Info Pill */
+    .specimen-hud {
+      position: absolute;
+      bottom: 22px;
+      right: 22px;
+      z-index: 25;
+      text-align: right;
+      background: rgba(9, 9, 9, 0.86);
+      border: 1px solid rgba(94, 94, 94, 0.3);
+      padding: 12px 18px;
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .specimen-hud .stage-num {
+      font-size: 0.66rem;
+      color: var(--magenta-bright);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .specimen-hud .specimen-title {
+      font-size: 0.82rem;
+      color: #ffffff;
+      font-weight: 600;
+      margin-top: 3px;
+      display: block;
+    }
+
+    .specimen-hud .bbch-code {
+      font-size: 0.66rem;
+      color: #a8a8a8;
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* Interactive 2.2x Magnifier Loupe */
+    #magnifier-loupe {
+      position: absolute;
+      width: 195px;
+      height: 195px;
+      border-radius: 50%;
+      border: 2px solid var(--magenta);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85), 0 0 28px rgba(94, 94, 94, 0.55);
+      pointer-events: none;
+      z-index: 35;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.8);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      background-repeat: no-repeat;
+      background-color: #000;
+    }
+
+    #magnifier-loupe.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .loupe-tag {
+      position: absolute;
+      bottom: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #090909;
+      color: var(--magenta-bright);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--border-glass);
+      white-space: nowrap;
+    }
+
+    /* FLOATING BOTTOM QUICK-JUMP STAGE DOCK */
+    .stage-dock {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(8, 8, 8, 0.85);
+      border: 1px solid var(--border-glass);
+      padding: 7px 10px;
+      border-radius: 40px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.8), 0 0 25px rgba(94, 94, 94, 0.18);
+    }
+
+    .dock-item {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: 30px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .dock-item:hover {
+      color: #ffffff;
+      background: rgba(94, 94, 94, 0.12);
+    }
+
+    .dock-item.active {
+      background: linear-gradient(135deg, var(--magenta), var(--violet));
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 0 16px rgba(94, 94, 94, 0.5);
+    }
+
+    .dock-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(94, 94, 94, 0.14);
+      border: 1px solid var(--border-glass);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .dock-arrow:hover {
+      background: var(--magenta);
+    }
+
+    @media (max-width: 1024px) {
+      .info-column {
+        width: 100%;
+        padding: 0 5vw;
+      }
+      .visual-cockpit {
+        width: calc(100% - 32px);
+        left: 16px;
+        right: 16px;
+        opacity: 0.32;
+        pointer-events: none;
+      }
+      .stage-dock {
+        width: 94%;
+        overflow-x: auto;
+        justify-content: flex-start;
+      }
+    }
+  
+    /* Clean monochrome theme. Photography and animation behavior are unchanged. */
+    :root {
+      --magenta: #202020; --magenta-bright: #333333; --magenta-deep: #111111;
+      --violet: #444444; --bg-dark: #f7f7f7; --bg-panel: #ffffff;
+      --border-glass: #dedede; --border-bright: #b5b5b5;
+      --text-main: #171717; --text-muted: #5a5a5a;
+    }
+    .ambient-backdrop { background: radial-gradient(ellipse at 15% 15%, #ffffff 0%, transparent 65%); }
+    header { background: rgba(255,255,255,.94); box-shadow: 0 4px 24px rgba(0,0,0,.05); }
+    .brand-orb { width: 40px; height: 40px; border-radius: 12px; background: #f2f2f2; box-shadow: none; flex-shrink: 0; }
+    .brand-orb img { width: 32px; height: 32px; display: block; }
+    .brand-title { background: none; color: #171717; -webkit-text-fill-color: currentColor; letter-spacing: 1px; }
+    .status-pill { background: #f5f5f5; border-color: #e4e4e4; }
+    .action-btn { background: #181818; border-color: #181818; color: #fff; min-height: 38px; }
+    .action-btn:hover, .action-btn.active-tool { background: #383838; border-color: #383838; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+    .info-card { box-shadow: 0 12px 40px rgba(0,0,0,.045); }
+    .info-card::before { height: 3px; background: #202020; }
+    .info-card:hover { box-shadow: 0 16px 48px rgba(0,0,0,.075); }
+    .stage-tag { background: #f5f5f5; border-color: #e4e4e4; color: #444; }
+    .stage-big-num { background: none; -webkit-text-fill-color: #b5b5b5; color: #b5b5b5; }
+    h1, h2 { color: #151515; }
+    .feature-item { background: #fafafa; border-color: #e8e8e8; }
+    .feature-item:hover { background: #f2f2f2; border-color: #ccc; }
+    .feature-icon { background: #eaeaea; color: #222; }
+    .feature-text { color: #555; }
+    .feature-text strong { color: #171717; }
+    .bento-metrics { border-color: #e5e5e5; }
+    .bento-box { background: #f7f7f7; border-color: #e7e7e7; }
+    .bento-val { color: #171717; }
+    .bento-lbl { color: #666; }
+    .mini-bar { background: #dedede; }
+    .mini-bar-fill { background: #252525; box-shadow: none; }
+    .visual-cockpit { background: #111; border-color: #d5d5d5; box-shadow: 0 16px 48px rgba(0,0,0,.14); }
+    .cockpit-badge, .cockpit-btn, .anatomical-pin, .macro-inset-card, .specimen-hud, .swap-badge, .loupe-tag {
+      background: rgba(18,18,18,.88); border-color: rgba(255,255,255,.28); color: #fff;
+    }
+    .cockpit-btn:hover, .cockpit-btn.active { background: #fff; border-color: #fff; color: #171717; box-shadow: none; }
+    .live-dot { background: #fff; box-shadow: 0 0 10px rgba(255,255,255,.35); }
+    .anatomical-pin, .macro-inset-card { box-shadow: 0 12px 30px rgba(0,0,0,.2); }
+    .macro-inset-card:hover { border-color: #fff; }
+    .macro-inset-title, .specimen-hud .stage-num { color: #fff; }
+    .macro-inset-sub, .specimen-hud .bbch-code { color: #d0d0d0; }
+    #magnifier-loupe { border-color: #fff; box-shadow: 0 10px 32px rgba(0,0,0,.4); }
+    .stage-dock { background: rgba(255,255,255,.96); box-shadow: 0 8px 30px rgba(0,0,0,.1); }
+    .dock-item { color: #555; min-height: 36px; }
+    .dock-item:hover { background: #eee; color: #111; }
+    .dock-item.active { background: #181818; color: #fff; box-shadow: none; }
+    .dock-arrow { background: #f0f0f0; color: #171717; border-color: #e0e0e0; }
+    .dock-arrow:hover { background: #202020; color: #fff; }
+    button:focus-visible, .action-btn:focus-within { outline: 2px solid #777; outline-offset: 4px; }
+    ::selection { background: #222; color: #fff; }
+    @media (max-width: 700px) {
+      header { left: 12px; right: 12px; top: 12px; height: auto; min-height: 64px; padding: 12px 14px; gap: 12px; flex-wrap: wrap; }
+      .brand-title { font-size: .8rem; }
+      .header-Right { gap: 6px; flex-wrap: wrap; }
+      .status-pill { padding: 6px 8px; font-size: .6rem; }
+      .action-btn { padding: 7px 10px; font-size: .6rem; }
+      .stage-section { padding-top: 160px; }
+      .info-card { padding: 26px 20px; }
+      .stage-tag { font-size: .58rem; letter-spacing: .6px; padding: 6px 8px; }
+      .bento-metrics { gap: 6px; }
+      .bento-box { padding: 12px 8px; }
+      .bento-val { font-size: 1rem; }
+    }
+    .brand-text { display: flex; flex-direction: column; gap: 4px; }
+    .brand-credit { font-size: 0.7rem; font-weight: 500; line-height: 1.4; color: #606060; letter-spacing: 0.15px; }
+  </style>
+</head>
+<body>
+
+  <!-- Cyber-Botanical Grid & Magenta Aurora Backdrop -->
+  <div class="ambient-backdrop"></div>
+
+  <!-- Floating Glass Header -->
+  <header>
+    <div class="brand-cluster">
+      <div class="brand-orb"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSI+PHBhdGggZD0iTTMwIDE4QzI1IDEyIDI4IDcgMjQgM2M4IDIgMTAgOCAxMCAxNE0zNCAxOEMzNSAxMSAzOSA4IDQwIDMiIHN0cm9rZT0iIzIwMjAyMCIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zMSAxN0MyNyAyNiAxMCAyOSAxMCA0M2MwIDExIDEwIDE2IDIyIDE2czIyLTUgMjItMTZjMC0xNC0xNy0xNy0yMS0yNloiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzIwMjAyMCIgc3Ryb2tlLXdpZHRoPSIyLjUiLz48cGF0aCBkPSJNMzAgMjJDMjUgMzIgMTkgMzUgMTkgNDRjMCA3IDUgMTIgMTMgMTVNMzQgMjJjNSAxMCAxMSAxMyAxMSAyMiAwIDctNSAxMi0xMyAxNU0zMiAyNXYzMk0yOCA1OWwtMyAzbTctM3YzbTQtMyAzIDMiIHN0cm9rZT0iIzIwMjAyMCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==" alt="Onion logo" width="32" height="32"></div>
+      <div class="brand-text">
+        <div class="brand-title">Onion. Revolutionized</div>
+        <div class="brand-credit">Presented by Sarthak Gaikwad</div>
+      </div>
+    </div>
+
+    <div class="header-Right">
+      <div class="status-pill">
+        <span>BBCH: <strong id="nav-bbch">Stage 00</strong></span>
+      </div>
+      <div class="status-pill">
+        <span>Cycle: <strong id="nav-progress">16%</strong></span>
+      </div>
+      <label class="action-btn" title="Upload your own field photograph for the current stage">
+        <span>+ Upload Field Photo</span>
+        <input type="file" id="customPhotoInput" accept="image/*" style="display:none">
+      </label>
+    </div>
+  </header>
+
+  <!-- Main Split Layout -->
+  <div class="split-wrapper">
+
+    <!-- LEFT COLUMN: Scrollable Interactive Stage Cards -->
+    <main class="info-column">
+
+      <!-- STAGE 1: REAL ONION SEEDS -->
+      <section class="stage-section" id="sec-0" data-index="0">
+        <div class="info-card">
+          <div class="card-top-row">
+            <span class="stage-tag">Phase 01 // BBCH 00 — Dormant Seed</span>
+            <span class="stage-big-num">01</span>
+          </div>
+          <h1>The True Black Seed.</h1>
+          <p class="description">
+            The cycle begins inside real <em>Allium cepa</em> seeds—intensely black, rhomboidal-to-trigonous capsules enclosed in a wrinkled, protective seed coat (testa). Inside lies a curved cylindrical embryo coiled within lipid-rich endosperm reserves.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Rugose Black Testa:</strong> Microscopic epidermal ridges lock out soil pathogens until moisture imbibition begins.</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>High-Density Endosperm:</strong> Fuels the initial 10–14 days of subterranean radicle elongation before photosynthesis.</div>
+            </div>
+          </div>
+          <div class="bento-metrics">
+            <div class="bento-box">
+              <span class="bento-val">6 × 4 mm</span>
+              <span class="bento-lbl">Seed Caliber</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 75%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">3.6 g</span>
+              <span class="bento-lbl">1000-Seed Wt</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 82%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">98.4%</span>
+              <span class="bento-lbl">Genetic Purity</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 98%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 2: REAL SEEDLING & COTYLEDON EMERGENCE -->
+      <section class="stage-section" id="sec-1" data-index="1">
+        <div class="info-card">
+          <div class="card-top-row">
+            <span class="stage-tag">Phase 02 // BBCH 09–11 — Emergence</span>
+            <span class="stage-big-num">02</span>
+          </div>
+          <h2>Loop & Flag-Leaf Stage.</h2>
+          <p class="description">
+            Upon soil moisture absorption, the primary radicle anchors downward while the tubular cotyledon arches upward in a signature 180° "loop stage." As it straightens into the whip or flag-leaf stage, it hoists the black seed coat into the air.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Epigeal Hook Mechanics:</strong> The bent cotyledon knee breaks through crusted topsoil while shielding the delicate meristem.</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>First True Leaf:</strong> Pierces through the cotyledon sheath pore 14 to 21 days after sowing.</div>
+            </div>
+          </div>
+          <div class="bento-metrics">
+            <div class="bento-box">
+              <span class="bento-val">10–14 d</span>
+              <span class="bento-lbl">Emergence Time</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 70%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">18–22°C</span>
+              <span class="bento-lbl">Ideal Soil Temp</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 85%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">94.0%</span>
+              <span class="bento-lbl">Field Stand</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 94%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 3: REAL FIELD VEGETATIVE GROWTH -->
+      <section class="stage-section" id="sec-2" data-index="2">
+        <div class="info-card">
+          <div class="card-top-row">
+            <span class="stage-tag">Phase 03 // BBCH 19–41 — Field Canopy</span>
+            <span class="stage-big-num">03</span>
+          </div>
+          <h2>Hollow Tubular Canopy.</h2>
+          <p class="description">
+            In the open field, the crop builds an erect photosynthetic architecture of bluish-green, hollow D-shaped leaves coated in protective wax. Each leaf blade directly generates one concentric storage ring inside the future onion bulb.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>1-to-1 Leaf-to-Ring Ratio:</strong> Vigorous vegetative leaf count determines final bulb diameter and scale thickness.</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Epicuticular Wax Shield:</strong> Repels water droplets and reduces fungal foliar blight and thrips feeding damage.</div>
+            </div>
+          </div>
+          <div class="bento-metrics">
+            <div class="bento-box">
+              <span class="bento-val">9–13</span>
+              <span class="bento-lbl">Active Leaves</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 88%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">55 cm</span>
+              <span class="bento-lbl">Canopy Height</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 78%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">12–14 hr</span>
+              <span class="bento-lbl">Photoperiod</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 90%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 4: REAL VEGETABLE BULB DEVELOPMENT -->
+      <section class="stage-section" id="sec-3" data-index="3">
+        <div class="info-card">
+          <div class="card-top-row">
+            <span class="stage-tag">Phase 04 // BBCH 47–49 — Bulb Swelling</span>
+            <span class="stage-big-num">04</span>
+          </div>
+          <h2>The Mature Vegetable Bulb.</h2>
+          <p class="description">
+            Triggered by critical daylength and temperature, sugars translocate rapidly into the leaf bases. The bulb swells into concentric fleshy tunics, the neck softens and topples ("neck fall"), and outer skins cure into lustrous papery armor.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Concentric Scale Storage:</strong> Rich in fructans and organosulfur compounds that sustain second-season flowering.</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Vernalization Induction:</strong> Cold storage conditioning (4–10°C) primes the internal apical meristem to bolt.</div>
+            </div>
+          </div>
+          <div class="bento-metrics">
+            <div class="bento-box">
+              <span class="bento-val">85–100 mm</span>
+              <span class="bento-lbl">Bulb Diameter</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 92%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">13.5%</span>
+              <span class="bento-lbl">Brix Solids</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 80%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">115 Days</span>
+              <span class="bento-lbl">Harvest Cycle</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 100%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 5: REAL UMBEL FLOWERING (ANTHESIS) -->
+      <section class="stage-section" id="sec-4" data-index="4">
+        <div class="info-card">
+          <div class="card-top-row">
+            <span class="stage-tag">Phase 05 // BBCH 51–65 — Umbel Anthesis</span>
+            <span class="stage-big-num">05</span>
+          </div>
+          <h2>Scape Bolting & Flowering.</h2>
+          <p class="description">
+            In the reproductive phase, the vernalized bulb drives hollow, inflated floral stalks (scapes) over 1 meter skyward. The papery spathe splits at the crown, opening a spherical umbel of 200 to 1,000+ star-like white florets.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Protandrous Pollination:</strong> Anthers shed pollen 2–3 days before the stigma becomes receptive, ensuring hybrid vigor.</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Superior Trilocular Ovary:</strong> Each floret holds a green 3-chambered ovary at its center that develops into the onion fruit.</div>
+            </div>
+          </div>
+          <div class="bento-metrics">
+            <div class="bento-box">
+              <span class="bento-val">800+</span>
+              <span class="bento-lbl">Florets / Head</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 95%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">6 Tepals</span>
+              <span class="bento-lbl">Floral Symmetry</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 85%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">88.0%</span>
+              <span class="bento-lbl">Outcrossing</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 88%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STAGE 6: REAL ONION FRUIT DEVELOPMENT (CAPSULES) -->
+      <section class="stage-section" id="sec-5" data-index="5">
+        <div class="info-card">
+          <div class="card-top-row">
+            <span class="stage-tag">Phase 06 // BBCH 71–89 — Onion Fruit Capsule</span>
+            <span class="stage-big-num">06</span>
+          </div>
+          <h2>Onion Fruit & Seed Dehiscence.</h2>
+          <p class="description">
+            Following pollination, the fertilized green ovary swells into the true botanical <strong>onion fruit—a 3-lobed globular loculicidal capsule</strong> (4–6 mm). As the fruit ripens and cures to tan parchment, its 3 chambers split lengthwise at the crown, exposing up to 6 gleaming black seeds per fruit.
+          </p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>3-Carpel Loculicidal Capsule:</strong> Three distinct chambers (locules) each nurture 2 ovules into mature black seeds.</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">✦</div>
+              <div class="feature-text"><strong>Crown Dehiscence:</strong> Dry capsule valves split along dorsal sutures, completing the full seed-to-seed cycle.</div>
+            </div>
+          </div>
+          <div class="bento-metrics">
+            <div class="bento-box">
+              <span class="bento-val">4–6 mm</span>
+              <span class="bento-lbl">Fruit Capsule Ø</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 84%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">6 Seeds</span>
+              <span class="bento-lbl">Per 3-Lobed Fruit</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 92%"></div></div>
+            </div>
+            <div class="bento-box">
+              <span class="bento-val">100%</span>
+              <span class="bento-lbl">Cycle Closed</span>
+              <div class="mini-bar"><div class="mini-bar-fill" style="width: 100%"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT COLUMN: Framed Interactive Visual Cockpit -->
+    <aside class="visual-cockpit" id="visualStage">
+
+      <!-- Top Overlay Cockpit Toolbar -->
+      <div class="cockpit-toolbar">
+        <div class="cockpit-badge">
+          <div class="live-dot"></div>
+          <span id="cockpitStageLabel">REAL SPECIMEN // STAGE 01</span>
+        </div>
+        <div class="cockpit-controls">
+          <button class="cockpit-btn active" id="toggleLoupeBtn" title="Toggle 2.2x hover magnifier">🔍 2.2x Loupe: ON</button>
+          <button class="cockpit-btn" id="swapViewBtn" title="Swap Main Crop Photo with Macro Inset">⇄ Swap Macro View</button>
+        </div>
+      </div>
+
+      <!-- Optical Magnifier Loupe -->
+      <div id="magnifier-loupe">
+        <span class="loupe-tag">2.2x MACRO CROP INSPECTION</span>
+      </div>
+
+      <!-- LAYER 0: REAL SEEDS -->
+      <div class="photo-layer active" data-layer="0">
+        <img class="main-crop-img"
+             src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_L._var._cepa;_seeds.JPG?width=1400"
+             alt="Real Allium cepa black seeds macro" />
+        <div class="photo-vignette"></div>
+        <div class="anatomical-pin" style="top: 38%; left: 46%;">
+          <div class="live-dot"></div>
+          <span class="pin-label">Rugose Black Seed Coat (Testa)</span>
+        </div>
+        <div class="macro-inset-card" onclick="swapMacroAndMain(0)">
+          <span class="swap-badge">Click to Expand</span>
+          <img class="macro-inset-img"
+               src="https://commons.wikimedia.org/wiki/Special:FilePath/Shallot_seeds.png?width=700"
+               alt="Allium seed batch" />
+          <div class="macro-inset-caption">
+            <span class="macro-inset-title">Macro Specimen // Testa</span>
+            <p class="macro-inset-sub">Angular black capsules (6 × 4 mm) extracted from dried umbel fruit valves.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 1: REAL SEEDLING -->
+      <div class="photo-layer" data-layer="1">
+        <img class="main-crop-img"
+             src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_Torunianka_2023-02-25_1090.jpg?width=1400"
+             alt="Real Allium cepa seedling emerging" />
+        <div class="photo-vignette"></div>
+        <div class="anatomical-pin" style="top: 34%; left: 50%;">
+          <div class="live-dot"></div>
+          <span class="pin-label">Tubular Cotyledon & First True Leaf</span>
+        </div>
+        <div class="macro-inset-card" onclick="swapMacroAndMain(1)">
+          <span class="swap-badge">Click to Expand</span>
+          <img class="macro-inset-img"
+               src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_L._var._cepa;_seeds.JPG?width=600"
+               alt="Seed coat lifted at tip" />
+          <div class="macro-inset-caption">
+            <span class="macro-inset-title">Epigeal Emergence</span>
+            <p class="macro-inset-sub">Cotyledon straightens from the loop hook, hoisting the seed testa skyward.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 2: REAL FIELD CANOPY -->
+      <div class="photo-layer" data-layer="2">
+        <img class="main-crop-img"
+             src="https://commons.wikimedia.org/wiki/Special:FilePath/Onion_field_in_Imaizumi,_Shiroishi.jpg?width=1400"
+             alt="Real cultivated onion crop field" />
+        <div class="photo-vignette"></div>
+        <div class="anatomical-pin" style="top: 48%; left: 42%;">
+          <div class="live-dot"></div>
+          <span class="pin-label">Waxy Hollow Cylindrical Foliage</span>
+        </div>
+        <div class="macro-inset-card" onclick="swapMacroAndMain(2)">
+          <span class="swap-badge">Click to Expand</span>
+          <img class="macro-inset-img"
+               src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_001.JPG?width=700"
+               alt="Whole onion plant habitus" />
+          <div class="macro-inset-caption">
+            <span class="macro-inset-title">Canopy Architecture</span>
+            <p class="macro-inset-sub">Hollow bluish-green leaves synthesizing carbohydrates before bulbing.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 3: REAL VEGETABLE BULBS -->
+      <div class="photo-layer" data-layer="3">
+        <img class="main-crop-img"
+             src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_(2944502550).jpg?width=1400"
+             alt="Real harvested onion bulbs" />
+        <div class="photo-vignette"></div>
+        <div class="anatomical-pin" style="top: 46%; left: 45%;">
+          <div class="live-dot"></div>
+          <span class="pin-label">Cured Outer Papery Tunic Scales</span>
+        </div>
+        <div class="macro-inset-card" onclick="swapMacroAndMain(3)">
+          <span class="swap-badge">Click to Expand</span>
+          <img class="macro-inset-img"
+               src="https://commons.wikimedia.org/wiki/Special:FilePath/Onions_(Allium_cepa)_-_geograph.org.uk_-_935444.jpg?width=700"
+               alt="Maturing onion bulbs in soil" />
+          <div class="macro-inset-caption">
+            <span class="macro-inset-title">Bulb Swelling & Neck Fall</span>
+            <p class="macro-inset-sub">Fleshy concentric scales store fructans to power second-season bolting.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 4: REAL UMBEL FLOWERING -->
+      <div class="photo-layer" data-layer="4">
+        <img class="main-crop-img"
+             src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_002.JPG?width=1400"
+             alt="Real Allium cepa flower umbel" />
+        <div class="photo-vignette"></div>
+        <div class="anatomical-pin" style="top: 36%; left: 46%;">
+          <div class="live-dot"></div>
+          <span class="pin-label">Spherical Umbel Inflorescence</span>
+        </div>
+        <div class="macro-inset-card" onclick="swapMacroAndMain(4)">
+          <span class="swap-badge">Click to Expand</span>
+          <img class="macro-inset-img"
+               src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_003.JPG?width=700"
+               alt="Close-up of individual onion flowers" />
+          <div class="macro-inset-caption">
+            <span class="macro-inset-title">Protandrous Florets</span>
+            <p class="macro-inset-sub">Close-up of 6-tepaled florets with exerted anthers and green 3-lobed ovaries.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYER 5: REAL ONION FRUIT CAPSULES -->
+      <div class="photo-layer" data-layer="5">
+        <img class="main-crop-img"
+             src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_cepa_Czosnek_cebula_2017-10-15_01.jpg?width=1400"
+             alt="Real Allium cepa fruiting umbel with loculicidal capsules" />
+        <div class="photo-vignette"></div>
+        <div class="anatomical-pin" style="top: 40%; left: 44%;">
+          <div class="live-dot"></div>
+          <span class="pin-label">3-Lobed Loculicidal Fruit Capsules</span>
+        </div>
+        <div class="macro-inset-card" onclick="swapMacroAndMain(5)">
+          <span class="swap-badge">Click to Expand</span>
+          <img class="macro-inset-img"
+               src="https://commons.wikimedia.org/wiki/Special:FilePath/Allium_ampeloprasum_MHNT.BOT.2006.46.12.jpg?width=700"
+               alt="Dehisced Allium fruit capsules and black seeds" />
+          <div class="macro-inset-caption">
+            <span class="macro-inset-title">Capsule Dehiscence</span>
+            <p class="macro-inset-sub">Dried 3-chambered fruit capsules splitting open to release ripe black seeds.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom-Right Specimen HUD -->
+      <div class="specimen-hud">
+        <span class="stage-num" id="hudStageNum">STAGE 01 OF 06</span>
+        <span class="specimen-title" id="hudSpecimenTitle">Allium cepa L. — True Black Seed</span>
+        <span class="bbch-code" id="hudBbchCode">BBCH 00 // Dry Seed Dormancy</span>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- FLOATING BOTTOM QUICK-JUMP STAGE DOCK -->
+  <nav class="stage-dock" aria-label="Quick Stage Navigation">
+    <button class="dock-arrow" id="prevStageBtn" title="Previous Stage">←</button>
+    <button class="dock-item active" onclick="scrollToStage(0)">01 Seed</button>
+    <button class="dock-item" onclick="scrollToStage(1)">02 Sprout</button>
+    <button class="dock-item" onclick="scrollToStage(2)">03 Canopy</button>
+    <button class="dock-item" onclick="scrollToStage(3)">04 Bulb</button>
+    <button class="dock-item" onclick="scrollToStage(4)">05 Flower</button>
+    <button class="dock-item" onclick="scrollToStage(5)">06 Fruit</button>
+    <button class="dock-arrow" id="nextStageBtn" title="Next Stage">→</button>
+  </nav>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+    const stageData = [
+      {
+        num: "STAGE 01 OF 06",
+        label: "REAL SPECIMEN // STAGE 01",
+        title: "Allium cepa L. — True Black Seed",
+        bbch: "BBCH 00 // Dry Seed Dormancy",
+        pct: "16%"
+      },
+      {
+        num: "STAGE 02 OF 06",
+        label: "REAL SPECIMEN // STAGE 02",
+        title: "Allium cepa — Loop & Flag-Leaf Seedling",
+        bbch: "BBCH 09–11 // Cotyledon Emergence",
+        pct: "33%"
+      },
+      {
+        num: "STAGE 03 OF 06",
+        label: "REAL SPECIMEN // STAGE 03",
+        title: "Allium cepa — Tubular Field Canopy",
+        bbch: "BBCH 19–41 // Leaf Development",
+        pct: "50%"
+      },
+      {
+        num: "STAGE 04 OF 06",
+        label: "REAL SPECIMEN // STAGE 04",
+        title: "Allium cepa — Mature Tunic Bulb",
+        bbch: "BBCH 47–49 // Bulb Swelling & Neck Fall",
+        pct: "66%"
+      },
+      {
+        num: "STAGE 05 OF 06",
+        label: "REAL SPECIMEN // STAGE 05",
+        title: "Allium cepa — Spherical Flower Umbel",
+        bbch: "BBCH 51–65 // Scape Bolting & Anthesis",
+        pct: "83%"
+      },
+      {
+        num: "STAGE 06 OF 06",
+        label: "REAL SPECIMEN // STAGE 06",
+        title: "Allium cepa — Loculicidal Fruit Capsule",
+        bbch: "BBCH 71–89 // Fruit Swelling & Seed Dehiscence",
+        pct: "100%"
+      }
+    ];
+
+    const layers = document.querySelectorAll('.photo-layer');
+    const sections = document.querySelectorAll('.stage-section');
+    const dockItems = document.querySelectorAll('.dock-item');
+    const navBbch = document.getElementById('nav-bbch');
+    const navProgress = document.getElementById('nav-progress');
+    const cockpitStageLabel = document.getElementById('cockpitStageLabel');
+    const hudStageNum = document.getElementById('hudStageNum');
+    const hudSpecimenTitle = document.getElementById('hudSpecimenTitle');
+    const hudBbchCode = document.getElementById('hudBbchCode');
+
+    let currentActiveIndex = 0;
+    let loupeEnabled = true;
+
+    function activateStage(index) {
+      if (index === currentActiveIndex && layers[index].classList.contains('active')) return;
+      currentActiveIndex = index;
+
+      // Update Photo Layers with smooth Ken Burns transition
+      layers.forEach((layer, i) => {
+        const img = layer.querySelector('.main-crop-img');
+        const inset = layer.querySelector('.macro-inset-card');
+        const pin = layer.querySelector('.anatomical-pin');
+
+        if (i === index) {
+          layer.classList.add('active');
+          gsap.fromTo(layer, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.7, ease: 'power2.out' });
+          gsap.fromTo(img, { scale: 1.14 }, { scale: 1.02, duration: 1.35, ease: 'power2.out' });
+          gsap.fromTo(inset, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6, delay: 0.12 });
+          gsap.fromTo(pin, { scale: 0.85, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.45, delay: 0.2 });
+        } else {
+          gsap.to(layer, {
+            autoAlpha: 0,
+            duration: 0.5,
+            ease: 'power2.inOut',
+            onComplete: () => layer.classList.remove('active')
+          });
+        }
+      });
+
+      // Update Bottom Dock Active Pill
+      dockItems.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+
+      // Update Telemetry HUD
+      const d = stageData[index];
+      navBbch.textContent = d.bbch.split(' //')[0];
+      navProgress.textContent = d.pct;
+      cockpitStageLabel.textContent = d.label;
+      hudStageNum.textContent = d.num;
+      hudSpecimenTitle.textContent = d.title;
+      hudBbchCode.textContent = d.bbch;
+    }
+
+    // Bind ScrollTrigger to each Stage Section
+    sections.forEach((sec, idx) => {
+      ScrollTrigger.create({
+        trigger: sec,
+        start: 'top 55%',
+        end: 'bottom 45%',
+        onEnter: () => activateStage(idx),
+        onEnterBack: () => activateStage(idx)
+      });
+    });
+
+    // Quick-Jump Dock Smooth Scroll
+    window.scrollToStage = function(idx) {
+      const target = document.getElementById(`sec-${idx}`);
+      if (target) {
+        gsap.to(window, { duration: 0.9, scrollTo: { y: target, offsetY: 20 }, ease: 'power3.inOut' });
+      }
+    };
+
+    document.getElementById('prevStageBtn').addEventListener('click', () => {
+      const prev = Math.max(0, currentActiveIndex - 1);
+      scrollToStage(prev);
+    });
+
+    document.getElementById('nextStageBtn').addEventListener('click', () => {
+      const next = Math.min(stageData.length - 1, currentActiveIndex + 1);
+      scrollToStage(next);
+    });
+
+    // Swap Main Crop Photo & Macro Specimen Photo on Click
+    window.swapMacroAndMain = function(layerIdx) {
+      const layer = layers[layerIdx];
+      const mainImg = layer.querySelector('.main-crop-img');
+      const macroImg = layer.querySelector('.macro-inset-img');
+      const tempSrc = mainImg.src;
+      mainImg.src = macroImg.src;
+      macroImg.src = tempSrc;
+      gsap.fromTo(mainImg, { scale: 1.08, filter: 'brightness(1.3)' }, { scale: 1.02, filter: 'brightness(1)', duration: 0.5 });
+    };
+
+    document.getElementById('swapViewBtn').addEventListener('click', () => {
+      swapMacroAndMain(currentActiveIndex);
+    });
+
+    // Toggle 2.2x Optical Magnifier Loupe
+    const toggleLoupeBtn = document.getElementById('toggleLoupeBtn');
+    const visualStage = document.getElementById('visualStage');
+    const loupe = document.getElementById('magnifier-loupe');
+
+    toggleLoupeBtn.addEventListener('click', () => {
+      loupeEnabled = !loupeEnabled;
+      toggleLoupeBtn.classList.toggle('active', loupeEnabled);
+      toggleLoupeBtn.textContent = loupeEnabled ? '🔍 2.2x Loupe: ON' : '🔍 2.2x Loupe: OFF';
+      if (!loupeEnabled) loupe.classList.remove('visible');
+    });
+
+    visualStage.addEventListener('mousemove', (e) => {
+      if (!loupeEnabled) return;
+      if (e.target.closest('.macro-inset-card') || e.target.closest('.cockpit-toolbar')) {
+        loupe.classList.remove('visible');
+        return;
+      }
+
+      const rect = visualStage.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const activeLayer = layers[currentActiveIndex];
+      const activeImg = activeLayer.querySelector('.main-crop-img');
+
+      loupe.classList.add('visible');
+      loupe.style.left = `${x}px`;
+      loupe.style.top = `${y}px`;
+      loupe.style.backgroundImage = `url('${activeImg.src}')`;
+      loupe.style.backgroundSize = `${rect.width * 2.2}px ${rect.height * 2.2}px`;
+
+      const bgX = -((x / rect.width) * (rect.width * 2.2) - 97);
+      const bgY = -((y / rect.height) * (rect.height * 2.2) - 97);
+      loupe.style.backgroundPosition = `${bgX}px ${bgY}px`;
+    });
+
+    visualStage.addEventListener('mouseleave', () => {
+      loupe.classList.remove('visible');
+    });
+
+    // Custom Field Photo Loader
+    document.getElementById('customPhotoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      const activeImg = layers[currentActiveIndex].querySelector('.main-crop-img');
+      activeImg.src = url;
+    });
+  </script>
+</body>
+</html>
